@@ -3480,9 +3480,7 @@ function drainQueue() {
         currentQueue = queue;
         queue = [];
         while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
+            currentQueue[queueIndex].run();
         }
         queueIndex = -1;
         len = queue.length;
@@ -3534,6 +3532,7 @@ process.binding = function (name) {
     throw new Error('process.binding is not supported');
 };
 
+// TODO(shtylman)
 process.cwd = function () { return '/' };
 process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
@@ -32530,12 +32529,13 @@ module.exports = warning;
 module.exports = require('./lib/React');
 
 },{"./lib/React":32}],160:[function(require,module,exports){
-"use strict";
+'use strict';
 
 var React = require('react');
+var ProductModel = require('../models/ProductModel');
 
 module.exports = React.createClass({
-	displayName: "exports",
+	displayName: 'exports',
 
 	getInitialState: function getInitialState() {
 		return { error: null };
@@ -32544,103 +32544,103 @@ module.exports = React.createClass({
 		var errorElement = null;
 		if (this.state.error) {
 			errorElement = React.createElement(
-				"p",
-				{ className: "red" },
+				'p',
+				{ className: 'red' },
 				this.state.error
 			);
 		}
 		return React.createElement(
-			"div",
-			{ className: "container" },
+			'div',
+			{ className: 'container' },
 			React.createElement(
-				"div",
-				{ className: "row" },
+				'div',
+				{ className: 'row' },
 				React.createElement(
-					"form",
-					{ className: "col s12", onSubmit: this.onAddProduct },
+					'form',
+					{ className: 'col s12', onSubmit: this.onAddProduct },
 					React.createElement(
-						"h1",
+						'h1',
 						null,
-						"Add Product"
+						'Add Product'
 					),
 					errorElement,
 					React.createElement(
-						"div",
-						{ className: "row" },
+						'div',
+						{ className: 'row' },
 						React.createElement(
-							"div",
-							{ className: "input-field col s12" },
-							React.createElement("input", { type: "text", ref: "email", className: "validate" }),
+							'div',
+							{ className: 'input-field col s12' },
+							React.createElement('input', { type: 'text', ref: 'name', className: 'validate' }),
 							React.createElement(
-								"label",
+								'label',
 								null,
-								"Product Name"
+								'Product Name'
 							)
 						)
 					),
 					React.createElement(
-						"div",
-						{ className: "row" },
+						'div',
+						{ className: 'row' },
 						React.createElement(
-							"div",
-							{ className: "input-field col s12" },
-							React.createElement("textarea", { id: "textarea1", className: "materialize-textarea" }),
+							'div',
+							{ className: 'input-field col s12' },
+							React.createElement('textarea', { id: 'textarea1', ref: 'description', className: 'materialize-textarea' }),
 							React.createElement(
-								"label",
+								'label',
 								null,
-								"Description"
+								'Description'
 							)
 						)
 					),
 					React.createElement(
-						"div",
-						{ className: "row" },
+						'div',
+						{ className: 'row' },
 						React.createElement(
-							"div",
-							{ className: "input-field col s6" },
-							React.createElement("input", { type: "number", className: "validate" }),
+							'div',
+							{ className: 'input-field col s6' },
+							React.createElement('input', { type: 'number', id: 'price', ref: 'price', className: 'validate' }),
 							React.createElement(
-								"label",
+								'label',
 								null,
-								"Price"
+								'Price'
 							)
 						),
 						React.createElement(
-							"div",
-							{ className: "input-field col s6" },
+							'div',
+							{ className: 'input-field col s6' },
 							React.createElement(
-								"select",
-								{ className: "browser-default" },
+								'select',
+								{ className: 'browser-default', id: 'type', ref: 'type' },
 								React.createElement(
-									"option",
-									{ defaultValue: "", disabled: true, selected: true },
-									"Category"
+									'option',
+									{ value: '', disabled: true, selected: true },
+									'Category'
 								),
 								React.createElement(
-									"option",
-									{ defaultValue: "books" },
-									"Books"
+									'option',
+									{ value: 'books' },
+									'Books'
 								),
 								React.createElement(
-									"option",
-									{ defaultValue: "electronics" },
-									"Electronics"
+									'option',
+									{ value: 'electronics' },
+									'Electronics'
 								),
 								React.createElement(
-									"option",
-									{ defaultValue: "clothing" },
-									"Clothing"
+									'option',
+									{ value: 'clothing' },
+									'Clothing'
 								)
 							)
 						)
 					),
 					React.createElement(
-						"div",
-						{ className: "row" },
+						'div',
+						{ className: 'row' },
 						React.createElement(
-							"button",
-							{ className: "waves-effect waves-light btn" },
-							"Add Product"
+							'button',
+							{ className: 'waves-effect waves-light btn' },
+							'Add Product'
 						)
 					)
 				)
@@ -32649,85 +32649,289 @@ module.exports = React.createClass({
 	},
 	onAddProduct: function onAddProduct(e) {
 		e.preventDefault();
+		var newProduct = new ProductModel({
+			name: this.refs.name.getDOMNode().value,
+			description: this.refs.description.getDOMNode().value,
+			price: this.refs.price.getDOMNode().value,
+			type: this.refs.type.getDOMNode().value
+		});
+		newProduct.save(), this.props.router.navigate('allProducts', { trigger: true });
 	}
 });
 
-},{"react":159}],161:[function(require,module,exports){
-"use strict";
+},{"../models/ProductModel":171,"react":159}],161:[function(require,module,exports){
+'use strict';
 
 var React = require('react');
+var ProductModel = require('../models/ProductModel');
 
 module.exports = React.createClass({
-	displayName: "exports",
+	displayName: 'exports',
 
+	getInitialState: function getInitialState() {
+		return {
+			products: []
+		};
+	},
+	componentWillMount: function componentWillMount() {
+		var _this = this;
+
+		var query = new Parse.Query(ProductModel);
+		query.find().then(function (products) {
+			console.log(products);
+			_this.setState({ products: products });
+		}, function (err) {
+			console.log(err);
+		});
+	},
 	render: function render() {
-		return React.createElement(
-			"div",
-			{ className: "container" },
-			React.createElement(
-				"div",
-				{ className: "row" },
+		var productElements = this.state.products.map(function (product) {
+			return React.createElement(
+				'div',
+				null,
 				React.createElement(
-					"h1",
+					'a',
+					{ href: '#product/details/' + product.id },
+					product.get('name')
+				),
+				React.createElement(
+					'div',
 					null,
-					"Books"
+					product.get('description')
+				),
+				React.createElement(
+					'div',
+					null,
+					product.get('type')
+				),
+				React.createElement(
+					'div',
+					null,
+					'$',
+					product.get('price')
 				)
-			)
+			);
+		});
+
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				'h1',
+				null,
+				'All Products'
+			),
+			productElements
 		);
 	}
+
 });
 
-},{"react":159}],162:[function(require,module,exports){
-"use strict";
+},{"../models/ProductModel":171,"react":159}],162:[function(require,module,exports){
+'use strict';
 
 var React = require('react');
+var ProductModel = require('../models/ProductModel');
 
 module.exports = React.createClass({
-	displayName: "exports",
+	displayName: 'exports',
 
+	getInitialState: function getInitialState() {
+		return {
+			products: []
+		};
+	},
+	componentWillMount: function componentWillMount() {
+		var _this = this;
+
+		var query = new Parse.Query(ProductModel);
+		query.equalTo('type', 'Books').find().then(function (products) {
+			console.log(products);
+			_this.setState({ products: products });
+		}, function (err) {
+			console.log(err);
+		});
+	},
 	render: function render() {
-		return React.createElement(
-			"div",
-			{ className: "container" },
-			React.createElement(
-				"div",
-				{ className: "row" },
+		var productElements = this.state.products.map(function (product) {
+			return React.createElement(
+				'div',
+				null,
 				React.createElement(
-					"h1",
+					'div',
 					null,
-					"Clothing"
+					product.get('name')
+				),
+				React.createElement(
+					'div',
+					null,
+					product.get('description')
+				),
+				React.createElement(
+					'div',
+					null,
+					product.get('type')
+				),
+				React.createElement(
+					'div',
+					null,
+					'$',
+					product.get('price')
 				)
-			)
+			);
+		});
+
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				'h1',
+				null,
+				'Books'
+			),
+			productElements
 		);
 	}
+
 });
 
-},{"react":159}],163:[function(require,module,exports){
-"use strict";
+},{"../models/ProductModel":171,"react":159}],163:[function(require,module,exports){
+'use strict';
 
 var React = require('react');
+var ProductModel = require('../models/ProductModel');
 
 module.exports = React.createClass({
-	displayName: "exports",
+	displayName: 'exports',
 
+	getInitialState: function getInitialState() {
+		return {
+			products: []
+		};
+	},
+	componentWillMount: function componentWillMount() {
+		var _this = this;
+
+		var query = new Parse.Query(ProductModel);
+		query.equalTo('type', 'Clothing').find().then(function (products) {
+			console.log(products);
+			_this.setState({ products: products });
+		}, function (err) {
+			console.log(err);
+		});
+	},
 	render: function render() {
-		return React.createElement(
-			"div",
-			{ className: "container" },
-			React.createElement(
-				"div",
-				{ className: "row" },
+		var productElements = this.state.products.map(function (product) {
+			return React.createElement(
+				'div',
+				null,
 				React.createElement(
-					"h1",
+					'div',
 					null,
-					"Electronics"
+					product.get('name')
+				),
+				React.createElement(
+					'div',
+					null,
+					product.get('description')
+				),
+				React.createElement(
+					'div',
+					null,
+					product.get('type')
+				),
+				React.createElement(
+					'div',
+					null,
+					'$',
+					product.get('price')
 				)
-			)
+			);
+		});
+
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				'h1',
+				null,
+				'Clothing'
+			),
+			productElements
 		);
 	}
+
 });
 
-},{"react":159}],164:[function(require,module,exports){
+},{"../models/ProductModel":171,"react":159}],164:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var ProductModel = require('../models/ProductModel');
+
+module.exports = React.createClass({
+	displayName: 'exports',
+
+	getInitialState: function getInitialState() {
+		return {
+			products: []
+		};
+	},
+	componentWillMount: function componentWillMount() {
+		var _this = this;
+
+		var query = new Parse.Query(ProductModel);
+		query.equalTo('type', 'Electronics').find().then(function (products) {
+			console.log(products);
+			_this.setState({ products: products });
+		}, function (err) {
+			console.log(err);
+		});
+	},
+	render: function render() {
+		var productElements = this.state.products.map(function (product) {
+			return React.createElement(
+				'div',
+				null,
+				React.createElement(
+					'a',
+					{ href: '#product/details/' + product.id },
+					product.get('name')
+				),
+				React.createElement(
+					'div',
+					null,
+					product.get('description')
+				),
+				React.createElement(
+					'div',
+					null,
+					product.get('type')
+				),
+				React.createElement(
+					'div',
+					null,
+					'$',
+					product.get('price')
+				)
+			);
+		});
+
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				'h1',
+				null,
+				'Electronics'
+			),
+			productElements
+		);
+	}
+
+});
+
+},{"../models/ProductModel":171,"react":159}],165:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -32752,7 +32956,7 @@ module.exports = React.createClass({
 	}
 });
 
-},{"react":159}],165:[function(require,module,exports){
+},{"react":159}],166:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -32846,7 +33050,7 @@ module.exports = React.createClass({
 	}
 });
 
-},{"react":159}],166:[function(require,module,exports){
+},{"react":159}],167:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -32962,7 +33166,76 @@ module.exports = React.createClass({
 	}
 });
 
-},{"backbone":1,"react":159}],167:[function(require,module,exports){
+},{"backbone":1,"react":159}],168:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var PetModel = require('../models/ProductModel');
+
+module.exports = React.createClass({
+	displayName: 'exports',
+
+	getInitialState: function getInitialState() {
+		return {
+			product: null
+		};
+	},
+	componentWillMount: function componentWillMount() {
+		var _this = this;
+
+		var query = new Parse.Query(PetModel);
+		query.get(this.props.productId).then(function (product) {
+			_this.setState({ product: product });
+			console.log(product);
+		}, function (err) {
+			console.log(err);
+		});
+	},
+	render: function render() {
+		var content = React.createElement(
+			'div',
+			null,
+			'loading...'
+		);
+
+		if (this.state.product) {
+			content = React.createElement(
+				'div',
+				null,
+				React.createElement(
+					'h1',
+					null,
+					this.state.product.get('name')
+				),
+				React.createElement(
+					'div',
+					null,
+					this.state.product.get('description')
+				),
+				React.createElement(
+					'div',
+					null,
+					this.state.product.get('type')
+				),
+				React.createElement(
+					'div',
+					null,
+					'$',
+					this.state.product.get('price')
+				)
+			);
+		}
+
+		return React.createElement(
+			'div',
+			null,
+			content
+		);
+	}
+
+});
+
+},{"../models/ProductModel":171,"react":159}],169:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -33060,7 +33333,7 @@ module.exports = React.createClass({
 	}
 });
 
-},{"react":159}],168:[function(require,module,exports){
+},{"react":159}],170:[function(require,module,exports){
 'use strict';
 var React = require('react');
 var Backbone = require('backbone');
@@ -33075,24 +33348,33 @@ var BooksComponent = require('./components/BooksComponent');
 var ElectronicsComponent = require('./components/ElectronicsComponent');
 var ClothingComponent = require('./components/ClothingComponent');
 var RegisterComponent = require('./components/RegisterComponent');
+var ProductDetailsComponent = require('./components/ProductDetails');
+var AllProductsComponent = require('./components/AllProductsComponent');
 
 var app = document.getElementById('app');
+
+Parse.initialize('8EDh10L79slP1XtV31DaU7LX0V535SmeCjCsPRfG', 'ku0ubeXIrQADE6owuKfJdXrtKDr0dnJFLnj6mzDa');
 
 var Router = Backbone.Router.extend({
 	routes: {
 		'': 'home',
 		'add': 'add',
+		'allProducts': 'allProducts',
 		'category/books': 'books',
 		'category/electronics': 'electronics',
 		'category/clothing': 'clothing',
+		'product/details/:id': 'productDetails',
 		'login': 'login',
 		'register': 'register'
 	},
 	home: function home() {
 		React.render(React.createElement(HomeComponent, null), app);
 	},
+	allProducts: function allProducts() {
+		React.render(React.createElement(AllProductsComponent, null), app);
+	},
 	add: function add() {
-		React.render(React.createElement(AddProductComponent, null), app);
+		React.render(React.createElement(AddProductComponent, { router: r }), app);
 	},
 	books: function books() {
 		React.render(React.createElement(BooksComponent, null), app);
@@ -33102,6 +33384,9 @@ var Router = Backbone.Router.extend({
 	},
 	clothing: function clothing() {
 		React.render(React.createElement(ClothingComponent, null), app);
+	},
+	productDetails: function productDetails(id) {
+		React.render(React.createElement(ProductDetailsComponent, { productId: id }), app);
 	},
 	login: function login() {
 		React.render(React.createElement(LoginComponent, { router: r }), app);
@@ -33116,7 +33401,14 @@ Backbone.history.start();
 
 React.render(React.createElement(NavigationComponent, { router: r }), document.getElementById('nav'));
 
-},{"./components/AddProductComponent":160,"./components/BooksComponent":161,"./components/ClothingComponent":162,"./components/ElectronicsComponent":163,"./components/HomeComponent":164,"./components/LoginComponent":165,"./components/NavigationComponent":166,"./components/RegisterComponent":167,"backbone":1,"jquery":4,"react":159}]},{},[168])
+},{"./components/AddProductComponent":160,"./components/AllProductsComponent":161,"./components/BooksComponent":162,"./components/ClothingComponent":163,"./components/ElectronicsComponent":164,"./components/HomeComponent":165,"./components/LoginComponent":166,"./components/NavigationComponent":167,"./components/ProductDetails":168,"./components/RegisterComponent":169,"backbone":1,"jquery":4,"react":159}],171:[function(require,module,exports){
+'use strict';
+
+module.exports = Parse.Object.extend({
+	className: 'Product'
+});
+
+},{}]},{},[170])
 
 
 //# sourceMappingURL=bundle.js.map

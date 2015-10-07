@@ -10,7 +10,6 @@ module.exports = React.createClass({
 	componentWillMount: function() {
 	      var query = new Parse.Query(ProductModel);
 	      query
-	      .equalTo('type', 'Clothing')
 	      .find().then(
 	      		(products) => {
 	      			console.log(products);
@@ -26,7 +25,7 @@ module.exports = React.createClass({
 		.map(function(product) {
 			return(
 				<div>
-					<div>{product.get('name')}</div>
+					<a href={'#product/details/'+product.id}>{product.get('name')}</a>
 					<div>{product.get('description')}</div>
 					<div>{product.get('type')}</div>
 					<div>${product.get('price')}</div>
@@ -36,7 +35,7 @@ module.exports = React.createClass({
 
 			return (
 				<div>
-					<h1>Clothing</h1>
+					<h1>All Products</h1>
 					{productElements}
 				</div>
 			);
