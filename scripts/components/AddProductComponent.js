@@ -38,9 +38,9 @@ module.exports = React.createClass({
 							<div className="input-field col s6">
 								<select className="browser-default" id="type" ref="type">
 									<option value="" disabled selected>Category</option>
-									<option value="books">Books</option>
-									<option value="electronics">Electronics</option>
-									<option value="clothing">Clothing</option>
+									<option value="Books">Books</option>
+									<option value="Electronics">Electronics</option>
+									<option value="Clothing">Clothing</option>
 								</select>
 							</div>
 						</div>
@@ -57,7 +57,7 @@ module.exports = React.createClass({
 		var newProduct = new ProductModel({
 			name: this.refs.name.getDOMNode().value,
 			description: this.refs.description.getDOMNode().value,
-			price: this.refs.price.getDOMNode().value,
+			price: parseInt(this.refs.price.getDOMNode().value),
 			type: this.refs.type.getDOMNode().value
 		});
 		newProduct.save(),

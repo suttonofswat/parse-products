@@ -13,6 +13,7 @@ module.exports = React.createClass({
 
 		var links = [
 			<li key="home" className={currentPage === '' ? 'active' : ''}><a href="#">Home</a></li>,
+			<li key="allProducts" className={currentPage === 'allProducts' ? 'active' : ''}><a href="#allProducts">All</a></li>,
 			<li key="books" className={currentPage === 'category/books' ? 'active' : ''}><a href="#category/books">Books</a></li>,
 			<li key="electronics" className={currentPage === 'category/electronics' ? 'active' : ''}><a href="#category/electronics">Electronics</a></li>,
 			<li key="clothing" className={currentPage === 'category/clothing' ? 'active' : ''}><a href="#category/clothing">Clothing</a></li>
@@ -30,7 +31,7 @@ module.exports = React.createClass({
 
 		return (
 			<div className="nav-wrapper">
-				<a href="#" className="brand-logo left">Login Example</a>
+				<a href="#" className="brand-logo left">Congo</a>
 				<ul id="nav-mobile" className="right">
 					{links}
 				</ul>

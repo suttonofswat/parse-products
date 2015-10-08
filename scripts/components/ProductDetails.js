@@ -22,11 +22,14 @@ module.exports = React.createClass({
 	    );
 	},
 	render: function() {
-		var content = <div>loading...</div>;
+		var content = 
+		<div class="progress">
+      		<div class="indeterminate"></div>
+  		</div>;
 
 		if(this.state.product) {
 			content = (
-				<div>
+				<div className="fullRow z-depth-3">
 					<h1>{this.state.product.get('name')}</h1>
 					<div>{this.state.product.get('description')}</div>
 					<div>{this.state.product.get('type')}</div>
@@ -36,7 +39,7 @@ module.exports = React.createClass({
 		}
 
 		return (
-			<div>
+			<div className="fullPg">
 				{content}
 			</div>
 		);

@@ -25,17 +25,20 @@ module.exports = React.createClass({
 		var productElements = this.state.products
 		.map(function(product) {
 			return(
-				<div>
-					<div>{product.get('name')}</div>
+				<div className="fullRow z-depth-3">
+					<h5>{product.get('name')}</h5>
+					<div>{product.get('createdAt').toDateString()}</div>
 					<div>{product.get('description')}</div>
 					<div>{product.get('type')}</div>
 					<div>${product.get('price')}</div>
+					<a href={'#product/details/'+product.id}>Details</a>
+					
 				</div>
 			);
 		});
 
 			return (
-				<div>
+				<div className="fullPg">
 					<h1>Clothing</h1>
 					{productElements}
 				</div>

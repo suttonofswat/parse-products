@@ -32618,17 +32618,17 @@ module.exports = React.createClass({
 								),
 								React.createElement(
 									'option',
-									{ value: 'books' },
+									{ value: 'Books' },
 									'Books'
 								),
 								React.createElement(
 									'option',
-									{ value: 'electronics' },
+									{ value: 'Electronics' },
 									'Electronics'
 								),
 								React.createElement(
 									'option',
-									{ value: 'clothing' },
+									{ value: 'Clothing' },
 									'Clothing'
 								)
 							)
@@ -32652,7 +32652,7 @@ module.exports = React.createClass({
 		var newProduct = new ProductModel({
 			name: this.refs.name.getDOMNode().value,
 			description: this.refs.description.getDOMNode().value,
-			price: this.refs.price.getDOMNode().value,
+			price: parseInt(this.refs.price.getDOMNode().value),
 			type: this.refs.type.getDOMNode().value
 		});
 		newProduct.save(), this.props.router.navigate('allProducts', { trigger: true });
@@ -32664,6 +32664,7 @@ module.exports = React.createClass({
 
 var React = require('react');
 var ProductModel = require('../models/ProductModel');
+var query = new Parse.Query(ProductModel);
 
 module.exports = React.createClass({
 	displayName: 'exports',
@@ -32676,7 +32677,6 @@ module.exports = React.createClass({
 	componentWillMount: function componentWillMount() {
 		var _this = this;
 
-		var query = new Parse.Query(ProductModel);
 		query.find().then(function (products) {
 			console.log(products);
 			_this.setState({ products: products });
@@ -32687,42 +32687,142 @@ module.exports = React.createClass({
 	render: function render() {
 		var productElements = this.state.products.map(function (product) {
 			return React.createElement(
-				'div',
+				'tr',
 				null,
 				React.createElement(
-					'a',
-					{ href: '#product/details/' + product.id },
-					product.get('name')
-				),
-				React.createElement(
-					'div',
-					null,
-					product.get('description')
-				),
-				React.createElement(
-					'div',
+					'td',
 					null,
 					product.get('type')
 				),
 				React.createElement(
-					'div',
+					'td',
+					null,
+					product.get('name')
+				),
+				React.createElement(
+					'td',
 					null,
 					'$',
 					product.get('price')
+				),
+				React.createElement(
+					'td',
+					null,
+					React.createElement(
+						'a',
+						{ href: '#product/details/' + product.id },
+						'Details'
+					)
 				)
 			);
 		});
 
 		return React.createElement(
 			'div',
-			null,
+			{ className: 'fullPg' },
 			React.createElement(
 				'h1',
 				null,
 				'All Products'
 			),
-			productElements
+			React.createElement(
+				'div',
+				null,
+				React.createElement(
+					'button',
+					{ className: 'buttons waves-effect waves-light btn', onClick: this.sortLow },
+					'Lowest'
+				),
+				React.createElement(
+					'button',
+					{ className: 'buttons waves-effect waves-light btn', onClick: this.sortHigh },
+					'Highest'
+				),
+				React.createElement(
+					'button',
+					{ className: 'buttons waves-effect waves-light btn', onClick: this.sortNew },
+					'Newest'
+				),
+				React.createElement(
+					'button',
+					{ className: 'buttons waves-effect waves-light btn', onClick: this.sortOld },
+					'Oldest'
+				)
+			),
+			React.createElement(
+				'table',
+				{ className: 'highlight' },
+				React.createElement(
+					'thead',
+					null,
+					React.createElement(
+						'tr',
+						null,
+						React.createElement(
+							'th',
+							null,
+							'Category'
+						),
+						React.createElement(
+							'th',
+							null,
+							'Name'
+						),
+						React.createElement(
+							'th',
+							null,
+							'Price'
+						),
+						React.createElement(
+							'th',
+							null,
+							'More Information'
+						)
+					)
+				),
+				React.createElement(
+					'tbody',
+					null,
+					productElements
+				)
+			)
 		);
+	},
+	sortLow: function sortLow() {
+		var _this2 = this;
+
+		query.ascending("price").find().then(function (products) {
+			_this2.setState({ products: products });
+		}, function (err) {
+			console.log(err);
+		});
+	},
+	sortHigh: function sortHigh() {
+		var _this3 = this;
+
+		query.descending("price").find().then(function (products) {
+			_this3.setState({ products: products });
+		}, function (err) {
+			console.log(err);
+		});
+	},
+	sortNew: function sortNew() {
+		var _this4 = this;
+
+		query.descending("createdAt").find().then(function (products) {
+			_this4.setState({ products: products });
+		}, function (err) {
+			console.log(err);
+		});
+	},
+	sortOld: function sortOld() {
+		var _this5 = this;
+
+		query.ascending("createdAt").find().then(function (products) {
+			_this5.setState({ products: products });
+		}, function (err) {
+			console.log(err);
+		});
 	}
 
 });
@@ -32756,11 +32856,16 @@ module.exports = React.createClass({
 		var productElements = this.state.products.map(function (product) {
 			return React.createElement(
 				'div',
-				null,
+				{ className: 'fullRow z-depth-3' },
+				React.createElement(
+					'h5',
+					null,
+					product.get('name')
+				),
 				React.createElement(
 					'div',
 					null,
-					product.get('name')
+					product.get('createdAt').toDateString()
 				),
 				React.createElement(
 					'div',
@@ -32777,13 +32882,18 @@ module.exports = React.createClass({
 					null,
 					'$',
 					product.get('price')
+				),
+				React.createElement(
+					'a',
+					{ href: '#product/details/' + product.id },
+					'Details'
 				)
 			);
 		});
 
 		return React.createElement(
 			'div',
-			null,
+			{ className: 'fullPg' },
 			React.createElement(
 				'h1',
 				null,
@@ -32824,11 +32934,16 @@ module.exports = React.createClass({
 		var productElements = this.state.products.map(function (product) {
 			return React.createElement(
 				'div',
-				null,
+				{ className: 'fullRow z-depth-3' },
+				React.createElement(
+					'h5',
+					null,
+					product.get('name')
+				),
 				React.createElement(
 					'div',
 					null,
-					product.get('name')
+					product.get('createdAt').toDateString()
 				),
 				React.createElement(
 					'div',
@@ -32845,13 +32960,18 @@ module.exports = React.createClass({
 					null,
 					'$',
 					product.get('price')
+				),
+				React.createElement(
+					'a',
+					{ href: '#product/details/' + product.id },
+					'Details'
 				)
 			);
 		});
 
 		return React.createElement(
 			'div',
-			null,
+			{ className: 'fullPg' },
 			React.createElement(
 				'h1',
 				null,
@@ -32892,11 +33012,16 @@ module.exports = React.createClass({
 		var productElements = this.state.products.map(function (product) {
 			return React.createElement(
 				'div',
-				null,
+				{ className: 'fullRow z-depth-3' },
 				React.createElement(
-					'a',
-					{ href: '#product/details/' + product.id },
+					'h5',
+					null,
 					product.get('name')
+				),
+				React.createElement(
+					'div',
+					null,
+					product.get('createdAt').toDateString()
 				),
 				React.createElement(
 					'div',
@@ -32913,13 +33038,18 @@ module.exports = React.createClass({
 					null,
 					'$',
 					product.get('price')
+				),
+				React.createElement(
+					'a',
+					{ href: '#product/details/' + product.id },
+					'Details'
 				)
 			);
 		});
 
 		return React.createElement(
 			'div',
-			null,
+			{ className: 'fullPg' },
 			React.createElement(
 				'h1',
 				null,
@@ -32950,6 +33080,11 @@ module.exports = React.createClass({
 					"h1",
 					null,
 					"Home"
+				),
+				React.createElement(
+					"h6",
+					null,
+					"The Other Rainforest Shopping Site"
 				)
 			)
 		);
@@ -33080,6 +33215,14 @@ module.exports = React.createClass({
 			)
 		), React.createElement(
 			'li',
+			{ key: 'allProducts', className: currentPage === 'allProducts' ? 'active' : '' },
+			React.createElement(
+				'a',
+				{ href: '#allProducts' },
+				'All'
+			)
+		), React.createElement(
+			'li',
 			{ key: 'books', className: currentPage === 'category/books' ? 'active' : '' },
 			React.createElement(
 				'a',
@@ -33150,7 +33293,7 @@ module.exports = React.createClass({
 			React.createElement(
 				'a',
 				{ href: '#', className: 'brand-logo left' },
-				'Login Example'
+				'Congo'
 			),
 			React.createElement(
 				'ul',
@@ -33194,14 +33337,14 @@ module.exports = React.createClass({
 	render: function render() {
 		var content = React.createElement(
 			'div',
-			null,
-			'loading...'
+			{ 'class': 'progress' },
+			React.createElement('div', { 'class': 'indeterminate' })
 		);
 
 		if (this.state.product) {
 			content = React.createElement(
 				'div',
-				null,
+				{ className: 'fullRow z-depth-3' },
 				React.createElement(
 					'h1',
 					null,
@@ -33228,7 +33371,7 @@ module.exports = React.createClass({
 
 		return React.createElement(
 			'div',
-			null,
+			{ className: 'fullPg' },
 			content
 		);
 	}

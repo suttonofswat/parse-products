@@ -6,6 +6,7 @@ module.exports = React.createClass({
 			<div className="container">
 				<div className="row">
 					<h1>Home</h1>
+					<h6>The Other Rainforest Shopping Site</h6>
 				</div>
 			</div>
 		);
