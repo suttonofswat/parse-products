@@ -1,5 +1,5 @@
 var React = require('react');
-var PetModel = require('../models/ProductModel');
+var ProductModel = require('../models/ProductModel');
 
 module.exports = React.createClass({
 	getInitialState: function() {
@@ -8,7 +8,7 @@ module.exports = React.createClass({
 	    };
 	},
 	componentWillMount: function() {
-	    var query = new Parse.Query(PetModel);
+	    var query = new Parse.Query(ProductModel);
 	    query
 	    .get(this.props.productId)
 	    .then(

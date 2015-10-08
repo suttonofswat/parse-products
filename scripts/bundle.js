@@ -33062,36 +33062,141 @@ module.exports = React.createClass({
 });
 
 },{"../models/ProductModel":171,"react":159}],165:[function(require,module,exports){
-"use strict";
+'use strict';
 
 var React = require('react');
+var ProductModel = require('../models/ProductModel.js');
 
 module.exports = React.createClass({
-	displayName: "exports",
+	displayName: 'exports',
 
+	getInitialState: function getInitialState() {
+		return {
+			search: []
+		};
+	},
 	render: function render() {
-		return React.createElement(
-			"div",
-			{ className: "container" },
-			React.createElement(
-				"div",
-				{ className: "row" },
+		var searchElements = this.state.search.map(function (s) {
+			return React.createElement(
+				'tr',
+				null,
 				React.createElement(
-					"h1",
+					'td',
 					null,
-					"Home"
+					s.get('name')
 				),
 				React.createElement(
-					"h6",
+					'td',
 					null,
-					"The Other Rainforest Shopping Site"
+					s.get('description')
+				),
+				React.createElement(
+					'td',
+					null,
+					'$' + s.get('price')
+				)
+			);
+		});
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				'div',
+				{ className: 'container' },
+				React.createElement(
+					'div',
+					{ className: 'row' },
+					React.createElement(
+						'form',
+						{ className: 'col s12', onSubmit: this.search },
+						React.createElement(
+							'h1',
+							null,
+							'Home'
+						),
+						React.createElement(
+							'div',
+							{ className: 'row' },
+							React.createElement(
+								'div',
+								{ className: 'input-field col s12' },
+								React.createElement('input', { type: 'text', ref: 'productName', className: 'validate' })
+							)
+						),
+						React.createElement(
+							'div',
+							{ className: 'row' },
+							React.createElement(
+								'button',
+								{ className: 'waves-effect waves-light btn' },
+								'Search'
+							)
+						)
+					)
+				)
+			),
+			React.createElement(
+				'div',
+				{ className: 'container' },
+				React.createElement(
+					'div',
+					{ className: 'row' },
+					React.createElement(
+						'h1',
+						null,
+						'Products'
+					),
+					React.createElement(
+						'table',
+						{ className: 'striped' },
+						React.createElement(
+							'thead',
+							null,
+							React.createElement(
+								'tr',
+								null,
+								React.createElement(
+									'th',
+									{ 'data-field': 'id' },
+									'Product Name'
+								),
+								React.createElement(
+									'th',
+									{ 'data-field': 'name' },
+									'Product Description'
+								),
+								React.createElement(
+									'th',
+									{ 'data-field': 'price' },
+									'Item Price'
+								)
+							)
+						),
+						React.createElement(
+							'tbody',
+							null,
+							searchElements
+						)
+					)
 				)
 			)
 		);
+	},
+	search: function search(e) {
+		var _this = this;
+
+		e.preventDefault();
+		console.log('Looking.....');
+		var query = new Parse.Query(ProductModel);
+		query.startsWith('name', this.refs.productName.getDOMNode().value).find().then(function (s) {
+			_this.setState({ search: s });
+		}, function (err) {
+			console.log(err);
+		});
 	}
 });
 
-},{"react":159}],166:[function(require,module,exports){
+},{"../models/ProductModel.js":171,"react":159}],166:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -33313,7 +33418,7 @@ module.exports = React.createClass({
 'use strict';
 
 var React = require('react');
-var PetModel = require('../models/ProductModel');
+var ProductModel = require('../models/ProductModel');
 
 module.exports = React.createClass({
 	displayName: 'exports',
@@ -33326,7 +33431,7 @@ module.exports = React.createClass({
 	componentWillMount: function componentWillMount() {
 		var _this = this;
 
-		var query = new Parse.Query(PetModel);
+		var query = new Parse.Query(ProductModel);
 		query.get(this.props.productId).then(function (product) {
 			_this.setState({ product: product });
 			console.log(product);
