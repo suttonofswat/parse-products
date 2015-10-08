@@ -33299,6 +33299,11 @@ var Backbone = require('backbone');
 module.exports = React.createClass({
 	displayName: 'exports',
 
+	componentDidMount: function componentDidMount() {
+		$(document).ready(function () {
+			$('.button-collapse').sideNav();
+		});
+	},
 	componentWillMount: function componentWillMount() {
 		var _this = this;
 
@@ -33397,12 +33402,26 @@ module.exports = React.createClass({
 			{ className: 'nav-wrapper' },
 			React.createElement(
 				'a',
-				{ href: '#', className: 'brand-logo left' },
+				{ href: '#!', className: 'brand-logo' },
 				'Congo'
 			),
 			React.createElement(
+				'a',
+				{ href: '#', 'data-activates': 'mobile-demo', className: 'button-collapse' },
+				React.createElement(
+					'i',
+					{ className: 'material-icons' },
+					'menu'
+				)
+			),
+			React.createElement(
 				'ul',
-				{ id: 'nav-mobile', className: 'right' },
+				{ className: 'right hide-on-med-and-down' },
+				links
+			),
+			React.createElement(
+				'ul',
+				{ className: 'side-nav', id: 'mobile-demo' },
 				links
 			)
 		);
